@@ -1,0 +1,58 @@
+# SSABR NB Config - Apley Dec 14
+
+# S: {serialized}
+
+global
+  daemon
+  pidfile /var/run/nodebalancer/loadbalancer.pid
+  log /dev/log local0 notice
+  log-tag loadbalancer
+  stats socket /var/run/haproxy/loadbalancer.sock mode 600 level admin
+  node loadbalancer
+  description loadbalancer
+  spread-checks 5
+
+defaults
+  timeout connect 60s
+  timeout client 600s
+  timeout http-request 300s
+  timeout queue 60s
+  timeout server 600s
+  option tcp-smart-accept
+  option tcp-smart-connect
+  option allbackups
+  log global
+
+# Health monitoring
+listen health
+  mode http
+  bind :65535
+  monitor-uri /ping
+ # http-request deny unless local
+  stats enable
+  stats show-desc
+  stats show-legends
+  stats show-node
+  stats uri /stats
+
+# prometheus exporter
+frontend stats
+   mode http
+   bind *:8404
+   option http-use-htx
+   http-request use-service prometheus-exporter if { path /metrics }
+   stats enable
+   stats uri /stats
+   stats refresh 5s
+
+# Frontend: none
+frontend listener443
+  mode tcp
+  bind :443
+  default_backend backend443
+
+# Frontend: none
+frontend listener80
+  mode tcp
+  bind :80
+  default_backend backend80
