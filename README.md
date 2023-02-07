@@ -43,26 +43,8 @@ systemctl restart sshd
 kubectl get svc --kubeconfig=/etc/haproxy/kubeconfig -n {namespace of sevice} {service} -o jsonpath="{.status.loadBalancer.ingress[*].ip}" > /etc/haproxy/nbip.txt
 ```
 
-8. Run nb.sh for the first time, and verify that it's able to read via kubectl and the linode-cli, and generate a valid haproxy config, and that haproxy is running-
+8. Run nb.sh for the first time, and verify that it's able to read via kubectl and the linode-cli, and generate a valid haproxy config, and that haproxy is running.
 
-```
-root@localhost:/etc/haproxy# ./nb.sh
-root@localhost:/etc/haproxy# ls -l
-total 52
--rw-r--r-- 1 root root    7 Feb  3 22:06 configid443
--rw-r--r-- 1 root root    7 Feb  3 22:06 configid80
-drwxr-xr-x 2 root root 4096 Feb  3 21:23 errors
--rw-r--r-- 1 root root 1424 Feb  3 21:33 haproxy.base
--rw-r--r-- 1 root root 2412 Feb  3 22:07 haproxy.cfg
--rw-r--r-- 1 root root   66 Feb  3 22:07 input443.txt
--rw-r--r-- 1 root root   66 Feb  3 22:06 input80.txt
--rw-r--r-- 1 root root 2805 Feb  3 21:51 kubeconfig
--rw-r--r-- 1 root root    7 Feb  3 22:06 nbid.txt
--rw-r--r-- 1 root root   15 Feb  3 22:06 nbip.txt
--rwxr-xr-x 1 root root 2018 Feb  3 22:06 nb.sh
--rw-r--r-- 1 root root  495 Feb  3 22:07 newconfig443.txt
--rw-r--r-- 1 root root  493 Feb  3 22:06 newconfig80.txt
-```
 9. modify crontab to run the nb.sh script every minute, while surpressing stdout -
 
 ```
